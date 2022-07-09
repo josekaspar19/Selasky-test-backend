@@ -6,6 +6,7 @@ import ordersRoutes from "./routes/orders.routes";
 import productsRoutes from "./routes/products.routes";
 
 const app=express();
+const cors = require('cors');
 
 // Settings
 app.set("port", 3000);
@@ -13,6 +14,7 @@ app.set("port", 3000);
 // Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cors());
 // Routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/orders", ordersRoutes);
