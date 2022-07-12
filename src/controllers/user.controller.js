@@ -71,7 +71,7 @@ const getUser = async (req,res) => {
     try{
         const {id} = req.params;
         const pool = await getPool();
-        const result=await pool.query("SELECT IdUser, Name, Email, Status FROM user  WHERE IdUser = ?", id);
+        const result=await pool.query("SELECT IdUser, Name, Email, Status, if(Status = 1, 'Active', 'Inactive') as StatusT FROM user  WHERE IdUser = ?", id);
         console.log(result);
         res.json(result);
     }catch(error){

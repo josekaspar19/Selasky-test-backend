@@ -10,8 +10,10 @@ const addOrder = async (req, res) => {
 
         const order={IdUser, OrderNumber, DateTime, ProviderName, Observation, TotalValue, Status}
         const pool = await getPool();
-        await pool.query("INSERT INTO orders SET ?", order);
-        res.json({ message: "Order added!!!" });
+        await pool.query("INSERT INTO orders SET ?", order, function(err, result, fields){
+            res.json({ message: "Order added!!!", id: result.insertId });
+        });
+
     }catch(error){
         res.status(500);
         res.send(error.message);
@@ -40,12 +42,12 @@ const deleteOrder = async (req,res) => {
 const updateOrder = async (req,res) => {
     try{
         const { id } = req.params;
-        const { IdUser, OrderNumber, DateTime, ProviderName, Observation, TotalValue, Status} = req.body;
-
-        if(IdUser===undefined || OrderNumber===undefined || DateTime===undefined || ProviderName===undefined || Observation===undefined || TotalValue===undefined || Status===undefined){
+        const { OrderNumber, DateTime, Observation, ProviderName, TotalValue, Status} = req.body;
+  
+        if(OrderNumber===undefined || DateTime===undefined || ProviderName===undefined || Observation===undefined || TotalValue===undefined || Status===undefined){
             res.status(400).json({message: "Bad request. Please fill all field." });
         }
-        const order={IdUser, OrderNumber, DateTime, ProviderName, Observation, TotalValue, Status}
+        const order={OrderNumber, DateTime, ProviderName, Observation, TotalValue, Status}
         const pool = await getPool();
         await pool.query("UPDATE orders SET ? WHERE IdOrder = ?", [order, id]);
         res.json({message: "Order Updated!!!"});
@@ -58,7 +60,7 @@ const updateOrder = async (req,res) => {
 const getOrders = async (req,res) => {
     try{
         const pool = await getPool();
-        const result=await pool.query("SELECT IdOrder, IdUser, OrderNumber, DateTime, ProviderName, DateCreated, Observation, TotalValue, Status FROM orders ");
+        const result=await pool.query("SELECT IdOrder, O.IdUser, U.Name, OrderNumber, DateTime, ProviderName, DateCreated, Observation, TotalValue, O.Status FROM orders O, user U WHERE O.IdUser = U.IdUser ");
         console.log(result);
         res.json(result);
     }catch(error){
@@ -71,7 +73,7 @@ const getOrder = async (req,res) => {
     try{
         const {id} = req.params;
         const pool = await getPool();
-        const result=await pool.query("SELECT IdOrder, IdUser, OrderNumber, DateTime, ProviderName, DateCreated, Observation, TotalValue, Status FROM orders  WHERE IdOrder = ?", id);
+        const result=await pool.query("SELECT IdOrder, O.IdUser, U.Name, OrderNumber, DateTime, ProviderName, DateCreated, Observation, TotalValue, O.Status FROM orders O, user U WHERE O.IdUser = U.IdUser and O.IdOrder = ?", id);
         console.log(result);
         res.json(result);
     }catch(error){

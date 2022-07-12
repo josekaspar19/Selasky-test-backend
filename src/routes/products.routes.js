@@ -8,6 +8,7 @@ router.delete("/:id", productsController.deleteProduct);
 router.put("/:id", productsController.updateProduct);
 router.get("/", productsController.getProducts);
 router.get("/:id", productsController.getProduct);
+router.get("/order/:id", productsController.getProductOrder);
 
 
 

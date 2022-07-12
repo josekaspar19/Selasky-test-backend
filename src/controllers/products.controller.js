@@ -76,11 +76,25 @@ const getProduct = async (req,res) => {
     }
 };
 
+const getProductOrder = async (req,res) => {
+    try{
+        const {id} = req.params;
+        const pool = await getPool();
+        const result=await pool.query("SELECT IdOrdersProducts , IdOrder, ValueUnit, Unit, Description, SKU, Quantity, QtyBox, Weight, Volumen, Mark, Status FROM ordersproducts WHERE IdOrder = ?", id);
+        console.log(result);
+        res.json(result);
+    }catch(error){
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
 export const methods = {
     addProduct,
     deleteProduct,
     updateProduct,
     getProducts,
-    getProduct
+    getProduct,
+    getProductOrder
     
 };
